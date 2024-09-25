@@ -14,12 +14,11 @@ int main()
 {
     RenderWindow window(VideoMode(512, 512), "SFML works!", Style::Close | Style::Resize);
     RectangleShape player(Vector2f(100.0f, 100.0f));
-    Texture playerTexture;
-    playerTexture.loadFromFile("C:/Users/Peeps/Desktop/Destkop/Workspace/sfml-icon-small.png");
-    player.setTexture(&playerTexture);
     player.setOrigin(50.0f, 50.0f);
     player.setPosition(256.0f, 256.0f);
-
+    Texture playerTexture;
+    playerTexture.loadFromFile("C:/Users/Peeps/source/repos/SFML_app/SFML_app/colour_map.png");
+    player.setTexture(&playerTexture);
 
     // Vector2u textureSize = playerTexture.getSize();
     // textureSize.x /= 10;
