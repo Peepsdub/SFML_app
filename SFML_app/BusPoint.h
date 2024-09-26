@@ -11,19 +11,21 @@ using namespace std;
 class BusPoint {
 private:
     int id;
-    static int next_id;
-    bool write_data = false;
+    static int nextId;
+    bool writeData = false;
 
-    float extract_float(string& text);
+    float extractFloat(string& text);
+    int parseForInt(const string& str);
 
 public:
-    vector<float> pressure_values;
+    vector<float> pressureValues;
 
     BusPoint();
-    ~BusPoint();
 
-    int get_id() const;
-    static int get_next_id();
+    void showPressures();
+
+    int getId() const;
+    static int getNextId();
 };
 
 #endif // BUSPOINT_H

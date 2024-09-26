@@ -1,7 +1,9 @@
 #include <SFML/Graphics.hpp>
 using namespace sf;
 
-//#include "./BusPoint.cpp"
+
+#include "Animation.h"
+#include "BusPoint.h"
 
 #include <String>
 #include <iostream>
@@ -12,24 +14,27 @@ using namespace std;
 
 int main()
 {
-    RenderWindow window(VideoMode(512, 512), "SFML works!", Style::Close | Style::Resize);
+    RenderWindow window(VideoMode(1024, 1024), "SFML App", Style::Close | Style::Resize);
     RectangleShape player(Vector2f(100.0f, 100.0f));
     player.setOrigin(50.0f, 50.0f);
-    player.setPosition(256.0f, 256.0f);
+    player.setPosition(512.0f, 512.0f);
     Texture playerTexture;
     playerTexture.loadFromFile("C:/Users/Peeps/source/repos/SFML_app/SFML_app/colour_map.png");
     player.setTexture(&playerTexture);
 
-    // Vector2u textureSize = playerTexture.getSize();
-    // textureSize.x /= 10;
-    // textureSize.y /= 10;
+    Animation animation(&playerTexture, Vector2u(10, 10), 0.05f);
 
-    // player.setTextureRect(IntRect(textureSize.x*9, textureSize.y*9, textureSize.x, textureSize.y));
-    //BusPoint rear_wing;
+    float deltaTime = 0.0f;
+    Clock clock;
+    
+    BusPoint rearWing;
+    rearWing.showPressures();
 
 
     while (window.isOpen())
     {
+        deltaTime = clock.restart().asSeconds();
+
         Event event;
         while (window.pollEvent(event))
         {
@@ -44,6 +49,9 @@ int main()
             Vector2i mousePos = Mouse::getPosition(window);
             player.setPosition((float)mousePos.x, (float)mousePos.y);
         }
+
+        animation.Update(deltaTime);
+        player.setTextureRect(animation.uvRect);
 
         window.clear();
         window.draw(player);
