@@ -5,6 +5,8 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <SFML\Graphics.hpp>
+#include "Animation.h"
 
 using namespace std;
 
@@ -14,18 +16,25 @@ private:
     static int nextId;
     bool writeData = false;
 
-    float extractFloat(string& text);
-    int parseForInt(const string& str);
+    float parseFloat(string& text);
+    int parseInt(const string& str);
+
+    RectangleShape point;
+    Animation animation;
 
 public:
     vector<float> pressureValues;
 
-    BusPoint();
+    BusPoint(Texture* texture, Vector2u imageCount, float switchTime, float posX, float posY);
 
     void showPressures();
 
     int getId() const;
     static int getNextId();
+
+    void Update(float deltaTime);
+    void Draw(RenderWindow& window);
+    void setPosition(float posX, float posY);
 };
 
 #endif // BUSPOINT_H

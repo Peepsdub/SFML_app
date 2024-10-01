@@ -2,7 +2,6 @@
 using namespace sf;
 
 
-#include "Animation.h"
 #include "BusPoint.h"
 
 #include <String>
@@ -10,24 +9,22 @@ using namespace sf;
 #include <fstream>
 using namespace std;
 
-
+void genTestData(int n);
 
 int main()
 {
     RenderWindow window(VideoMode(1024, 1024), "SFML App", Style::Close | Style::Resize);
-    RectangleShape player(Vector2f(100.0f, 100.0f));
-    player.setOrigin(50.0f, 50.0f);
-    player.setPosition(512.0f, 512.0f);
-    Texture playerTexture;
-    playerTexture.loadFromFile("C:/Users/Peeps/source/repos/SFML_app/SFML_app/colour_map.png");
-    player.setTexture(&playerTexture);
+    
+    Texture pointTexture;
+    pointTexture.loadFromFile("C:/Users/Peeps/source/repos/SFML_app/SFML_app/colour_map.png");
 
-    Animation animation(&playerTexture, Vector2u(10, 10), 0.05f);
+    genTestData(50);
+
+    BusPoint rearWing(&pointTexture, Vector2u(10, 10), 2.0f, 512.0f, 512.0f);
 
     float deltaTime = 0.0f;
     Clock clock;
     
-    BusPoint rearWing;
     rearWing.showPressures();
 
 
@@ -47,16 +44,42 @@ int main()
 
         if (Mouse::isButtonPressed(Mouse::Left)) {
             Vector2i mousePos = Mouse::getPosition(window);
-            player.setPosition((float)mousePos.x, (float)mousePos.y);
+            rearWing.setPosition((float)mousePos.x, (float)mousePos.y);
         }
 
-        animation.Update(deltaTime);
-        player.setTextureRect(animation.uvRect);
+        rearWing.Update(deltaTime);
+        
 
         window.clear();
-        window.draw(player);
+        rearWing.Draw(window);
         window.display();
     }
 
     return 0;
+}
+
+void genTestData(int n) {
+    ofstream data("data.txt");
+    int seconds = 0;
+    int minutes = 0;
+    int hours = 1;
+
+    for (int i = 0; i < n; i++) {
+        data << "Bus " << 1 + (rand() % 5) << endl;
+        data << "Pressure reading: " << (rand() % 30) + ((float)(rand()) / (float)(RAND_MAX)) << endl;
+        data << "2024/10/1 (Tuesday) " << hours << ":" << minutes << ":" << seconds << endl;
+        data << endl;
+
+        if (i % 5 == 0)
+            seconds++;
+        if (seconds == 60) {
+            seconds = 0;
+            minutes++;
+        }
+        if (minutes == 60) {
+            minutes = 0;
+            hours++;
+        }
+    } 
+    data.close();
 }

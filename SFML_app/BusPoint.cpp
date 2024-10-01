@@ -7,7 +7,9 @@
 // Initialize the static member variable
 int BusPoint::nextId = 1;
 
-BusPoint::BusPoint() {
+BusPoint::BusPoint(Texture* texture, Vector2u imageCount, float switchTime, float posX, float posY) :
+    animation(texture, imageCount, switchTime)
+{
     id = nextId++;
 
     string data;
@@ -15,20 +17,26 @@ BusPoint::BusPoint() {
 
     // Instantiate the pressure_values from .txt based on the passed id number
     while (getline(readFile, data)) {
-        if (data.find("Bus") != string::npos && parseForInt(data) == id) {
+        if (data.find("Bus") != string::npos && parseInt(data) == id) {
             writeData = true;
         }
 
         else if (data.find("Pressure reading:") != string::npos && writeData) {
-            pressureValues.push_back(extractFloat(data));
+            pressureValues.push_back(parseFloat(data));
             writeData = false;
         }
     }
     readFile.close();
+
+    // BusPoint Graphics Setup
+    point.setSize(Vector2f(100.0f, 100.0f));
+    point.setOrigin(50.0f, 50.0f);
+    point.setPosition(posX, posY);
+    point.setTexture(texture);
 }
 
 
-float BusPoint::extractFloat(string& text) {
+float BusPoint::parseFloat(string& text) {
     string temp;
     for (char& ch : text) {
         if ((int(ch) > 47 && int(ch) < 58) || int(ch) == 46) {
@@ -38,7 +46,7 @@ float BusPoint::extractFloat(string& text) {
     return stof(temp);
 }
 
-int BusPoint::parseForInt(const string& str) {
+int BusPoint::parseInt(const string& str) {
     long long result = 0; // Use long long to avoid overflow for large integers
 
     for (char ch : str) {
@@ -49,8 +57,8 @@ int BusPoint::parseForInt(const string& str) {
     }
 
     // Handle potential overflow
-    if (result > std::numeric_limits<int>::max()) {
-        return std::numeric_limits<int>::max();
+    if (result > numeric_limits<int>::max()) {
+        return numeric_limits<int>::max();
     }
 
     return static_cast<int>(result);
@@ -69,4 +77,17 @@ int BusPoint::getId() const {
 
 int BusPoint::getNextId() {
     return nextId;
+}
+
+void BusPoint::Update(float deltaTime) {
+    animation.Update(deltaTime);
+    point.setTextureRect(animation.uvRect);
+}
+
+void BusPoint::Draw(RenderWindow& window) {
+    window.draw(point);
+}
+
+void BusPoint::setPosition(float posX, float posY) {
+    point.setPosition(posX, posY);
 }
